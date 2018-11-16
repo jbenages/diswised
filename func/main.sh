@@ -9,6 +9,7 @@ function ctrl_c() {
 }
 
 function createDirectory {
+  mkdir -p $CURRENTDIR/data/{tmp,airmon,airodump,csv,db}
   mkdir -p $CURRENTDIR/data/tmp/{log,PID,csv,nmap}
 }
 
