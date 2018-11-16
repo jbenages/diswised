@@ -17,11 +17,17 @@ function createDirectory {
 function main(){
  
   local LASTTIMERAPATTACK=0
-  
-  createDirectory
+  local LRESULT=""
+  local LAUXILIARYSOFT=""
+ 
+  LAUXILIARYSOFT=${AUXILIARYSOFT[@]}
+  LRESULT=$(checkExistsPrograms "$LAUXILIARYSOFT")
+  if [ $? != 0 ];then
+    logOutput "alert" "Program($LRESULT) Not installed. Plz install these programs: apt install aircrack-ng sqlite3 nmap hostapd dnsmasq macchanger libxml2-utils  \n"
+    exit 0
+  fi
 
-  ## Software needed: aircrack-ng, hostapd, dnsmasq, macchanger, sqlite3, libxml2-utils
-  
+  createDirectory
   stopZombieProcess
 
   startSniff
