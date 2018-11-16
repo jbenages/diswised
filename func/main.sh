@@ -24,7 +24,7 @@ function main(){
   LRESULT=$(checkExistsPrograms "$LAUXILIARYSOFT")
   if [ $? != 0 ];then
     logOutput "alert" "Program($LRESULT) Not installed. Plz install these programs: apt install aircrack-ng sqlite3 nmap hostapd dnsmasq macchanger libxml2-utils  \n"
-    exit 0
+    exit 1
   fi
 
   createDirectory
