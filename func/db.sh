@@ -28,27 +28,25 @@ function putCaptureDataToDB {
   LRESULT=$( query "delete from rawclientsignal;" )
   if [ ! -z "$LRESULT" ];then
     logOutput "alert" "Fail on delete rawclientsignal table data ($LRESULT) \n" 
-    exit 0
+    exit 1
   fi
-  logOutput "info" "Charge data of clients in DB \n" 
   LRESULT=$( importCSVToTable "$CURRENTDIR/data/tmp/csv/$DATETIME.client.diswised.csv" "rawclientsignal" )
   if [ ! -z "$LRESULT" ];then
     logOutput "alert" "Fail import csv to table rawclientsignal ($LRESULT) \n" 
-    exit 0
+    exit 1
   fi
-  logOutput "info" "Charge data of routers in DB \n" 
   LRESULT=$( query "delete from rawroutersignal;" )
   if [ ! -z "$LRESULT" ];then
     logOutput "alert" "Fail delete data on table rawroutersignal ($LRESULT) \n" 
-    exit 0
+    exit 1
   fi
   LRESULT=$( importCSVToTable "$CURRENTDIR/data/tmp/csv/$DATETIME.router.diswised.csv" "rawroutersignal" )
   if [ ! -z "$LRESULT" ];then
     logOutput "alert" "Fail import csv data on table rawroutersignal ($LRESULT) \n" 
-    exit 0
+    exit 1
   fi
 
-  #rm $CURRENTDIR/data/tmp/csv/*.diswised.csv
+  rm $CURRENTDIR/data/tmp/csv/*.diswised.csv
 
 }
 
@@ -88,10 +86,7 @@ function findClientToAudit {
     fi
   fi
 
-  if [ -z "$LCLIENTTOAUDIT" ];then
-    logOutput "nodone" "Not find target client \n"   
-  else
-    
+  if [ ! -z "$LCLIENTTOAUDIT" ];then
     LRESULT=$( createClientRow "$LCLIENTTOAUDIT" )
     if [ $? != 0 ];then
       logOutput "alert" "Error create client SGDB ($LRESULT) \n" 
