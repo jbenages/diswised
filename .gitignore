@@ -1,0 +1,4 @@
+data/*
+*.swp
+*.swo
+conf/conf.cfg
