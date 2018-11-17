@@ -30,6 +30,7 @@ CREATE TABLE client(
 	station_mac TEXT,
 	date_in DATETIME,
 	date_scan DATETIME,
+	manufacturer TEXT,
 	hostname TEXT,
 	scan_os TEXT,
 	scan_hostname TEXT,
@@ -51,6 +52,7 @@ CREATE TABLE router(
 	essid TEXT,
 	bssid TEXT,
 	date_in DATETIME,
+	manufacturer TEXT,
 	channel INTEGER
 );
 CREATE TABLE client_router(
