@@ -9,7 +9,7 @@ function ctrl_c() {
 }
 
 function createDirectory {
-  mkdir -p $CURRENTDIR/data/{tmp,airmon,airodump,csv,db}
+  mkdir -p $CURRENTDIR/data/{tmp,airmon,airodump,csv,db,oui}
   mkdir -p $CURRENTDIR/data/tmp/{log,PID,csv,nmap}
 }
 
@@ -26,7 +26,12 @@ function main(){
     logOutput "alert" "Program($LRESULT) Not installed. Plz install these programs: apt install aircrack-ng sqlite3 nmap hostapd dnsmasq macchanger libxml2-utils  \n"
     exit 1
   fi
-
+  
+  if [ ! -f "$OUIFILEPATH" ];then
+    logOutput "info" "Download OUI file\n"
+    downloadOUIFile  
+  fi  
+  
   createDirectory
   stopZombieProcess
 

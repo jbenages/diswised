@@ -26,22 +26,22 @@ function putCaptureDataToDB {
   fi
 
   LRESULT=$( query "delete from rawclientsignal;" )
-  if [ ! -z "$LRESULT" ];then
+  if [ $? != 0 ];then
     logOutput "alert" "Fail on delete rawclientsignal table data ($LRESULT) \n" 
     exit 1
   fi
   LRESULT=$( importCSVToTable "$CURRENTDIR/data/tmp/csv/$DATETIME.client.diswised.csv" "rawclientsignal" )
-  if [ ! -z "$LRESULT" ];then
+  if [ $? != 0 ];then
     logOutput "alert" "Fail import csv to table rawclientsignal ($LRESULT) \n" 
     exit 1
   fi
   LRESULT=$( query "delete from rawroutersignal;" )
-  if [ ! -z "$LRESULT" ];then
+  if [ $? != 0 ];then
     logOutput "alert" "Fail delete data on table rawroutersignal ($LRESULT) \n" 
     exit 1
   fi
   LRESULT=$( importCSVToTable "$CURRENTDIR/data/tmp/csv/$DATETIME.router.diswised.csv" "rawroutersignal" )
-  if [ ! -z "$LRESULT" ];then
+  if [ $? != 0 ];then
     logOutput "alert" "Fail import csv data on table rawroutersignal ($LRESULT) \n" 
     exit 1
   fi
@@ -85,12 +85,12 @@ function findClientToAudit {
       LCLIENTTOAUDIT=""
     fi
   fi
-
+  
   if [ ! -z "$LCLIENTTOAUDIT" ];then
     LRESULT=$( createClientRow "$LCLIENTTOAUDIT" )
     if [ $? != 0 ];then
       logOutput "alert" "Error create client SGDB ($LRESULT) \n" 
-      exit 0
+      exit 1
     fi
 
     if [ "$LASSOC" = false ];then
@@ -98,13 +98,13 @@ function findClientToAudit {
       LCLIENTPROBEDESSID=$( echo $LCLIENTPROBEDESSID | cut -d';' -f1 )
       LRESULT=$( createRouterRow "$LCLIENTPROBEDESSID" "" "" )
       if [ $? != 0 ];then
-        logOutput "alert" "Fail database query ($LRESULT) \n"
-	exit 0
+        logOutput "alert" "Fail database query ($LRESULT) when extract probed essids\n"
+	exit 1
       fi
       LRESULT=$( createRelationClientRouterDB "$LCLIENTTOAUDIT" "$LCLIENTPROBEDESSID" "" "false" "false" )
       if [ $? != 0 ];then
-        logOutput "alert" "Fail database query ($LRESULT) \n"
-	exit 0
+        logOutput "alert" "2 Fail database query ($LRESULT) \n"
+	exit 1
       fi
       LROUTERESSID=$LCLIENTPROBEDESSID
       ROUTERESSID=$LCLIENTPROBEDESSID
@@ -117,13 +117,13 @@ function findClientToAudit {
       if [ ! -z $LROUTERMAC ];then
         LRESULT=$( createRouterRow "$LROUTERESSID" "$LROUTERMAC" "$LROUTERCHANNEL" )
         if [ $? != 0 ];then
-          logOutput "alert" "Fail database query ($LRESULT) \n"
-	  exit 0
+          logOutput "alert" "3 Fail database query ($LRESULT) \n"
+	  exit 1
         fi
 	LRESULT=$( createRelationClientRouterDB "$LCLIENTTOAUDIT" "$ROUTERESSID" "$LROUTERMAC" "true" "false" > /dev/null )
         if [ $? != 0 ];then
-          logOutput "alert" "Fail database query ($LRESULT) \n"
-	  exit 0
+          logOutput "alert" "4 Fail database query ($LRESULT) \n"
+	  exit 1
         fi
       fi
     fi
@@ -166,6 +166,7 @@ function createRouterRow {
   local LSQLINSERT=""
   local LRETURN=0
   local LRESULT=""
+  local LMANUFACTURER=""
 
   if [ -z "$LROUTERCHANNEL" ];then
     LROUTERCHANNEL=0
@@ -187,8 +188,11 @@ function createRouterRow {
           LROUTERESSID=$( echo "$LRESULT" | cut -d"|" -f1 )
           LROUTERCHANNEL=$( echo "$LRESULT" | cut -d"|" -f2 )
         fi
-
-        LRESULT=$( query "insert into router (essid,bssid,date_in,channel) values ('$LROUTERESSID','$LROUTERMAC','`date '+%Y-%m-%d %H:%M:%S'`','$LROUTERCHANNEL');" )
+        if [ ! -z "$LROUTERMAC"  ];then
+          LMANUFACTURER=$( getManufacturerFromMAC "$LROUTERMAC" )
+        fi
+        echo "insert into router (essid,bssid,date_in,manufacturer,channel) values ('$LROUTERESSID','$LROUTERMAC','`date '+%Y-%m-%d %H:%M:%S'`','$LMANUFACTURER','$LROUTERCHANNEL');"
+        LRESULT=$( query "insert into router (essid,bssid,date_in,manufacturer,channel) values ('$LROUTERESSID','$LROUTERMAC','`date '+%Y-%m-%d %H:%M:%S'`','$LMANUFACTURER','$LROUTERCHANNEL');" )
         LRETURN=$?
       fi
     fi
@@ -238,6 +242,7 @@ function createClientRow {
   local LCLIENTMAC=$1
   local LRESULTINSERT=""
   local LRETURN=0
+  local LMANUFACTURER=""
   
   LCLIENTID=$( query "select id from client where station_mac = '$LCLIENTMAC';" )
   LRETURN=$?
@@ -247,7 +252,8 @@ function createClientRow {
     if [ ! -z $LCLIENTID ] ;then
       printf "$LCLIENTID"
     else
-      LRESULTINSERT=$( query "insert into client (station_mac,date_in,date_scan,scan_os,scan_port,scan_hostname) values ('$LCLIENTMAC','`date '+%Y-%m-%d %H:%M:%S'`','','','','')" )
+      LMANUFACTURER=$( getManufacturerFromMAC "$LCLIENTMAC" )
+      LRESULTINSERT=$( query "insert into client (station_mac,date_in,date_scan,manufacturer,hostname,scan_os,scan_port,scan_hostname) values ('$LCLIENTMAC','`date '+%Y-%m-%d %H:%M:%S'`','','$LMANUFACTURER','','','','')" )
       LRETURN=$?
       if [ $? = 0 ];then
         existsClient "$LCLIENTMAC"
