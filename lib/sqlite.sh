@@ -13,6 +13,7 @@ function importCSVToTable {
   local LPATHTOCSV=$1
   local LTABLE=$2
   printf ".mode csv\n.import $LPATHTOCSV $LTABLE \n" | sqlite3 $DATABASEPATH
+  return $?
 }
 
 ## Query to sqlite
