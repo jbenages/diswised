@@ -28,3 +28,7 @@ Security researchers, pentesters and auditors to audit WiFi clients ( Smartphone
 8. Macchanger
 9. libxml2-utils
 
+Install software:
+```
+# apt install aircrack-ng sqlite3 nmap hostapd dnsmasq macchanger libxml2-utils
+``` 
