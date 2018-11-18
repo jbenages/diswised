@@ -92,7 +92,7 @@ function storeTargets {
       logOutput "alert" "Error in SGDB ($LRESULT) \n"
       exit 0
     fi
-    logOutput "info" "Store target($i) with hostname($LHOSTNAMEDNS) associated($LASSOC) rap_assoc($LRAPASSOC) \n"
+    logOutput "objective" "Store target($i) with hostname($LHOSTNAMEDNS) associated($LASSOC) rap_assoc($LRAPASSOC) \n"
   done
 
 }

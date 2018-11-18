@@ -23,9 +23,9 @@ function logOutput(){
     local OUTPUT=$2
     local DOLOGHTML=$3
 
-    local -A symbol=( [alert]="!" [info]="i" [done]="+" [nodone]="-" [input]="?" )
-    local -A color=( [alert]="31" [info]="34" [done]="32" [nodone]="33" [input]="35" )
-    local -A colorHTML=( [alert]="red" [info]="blue" [done]="green" [nodone]="yellow" )
+    local -A symbol=( [alert]="!" [info]="i" [done]="+" [nodone]="-" [input]="?" [objective]="*" )
+    local -A color=( [alert]="31" [info]="34" [done]="32" [nodone]="33" [input]="36" [objective]="35"  )
+    local -A colorHTML=( [alert]="red" [info]="blue" [done]="green" [nodone]="yellow" [objective]="magenta" )
     local SHOWLOG=true
 
     local LDATE=`date '+%Y%m%d%H%M%S'`
