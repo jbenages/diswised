@@ -8,55 +8,49 @@ function ctrl_c() {
   exit 0
 }
 
-function createDirectory {
-  mkdir -p $CURRENTDIR/data/{tmp,airmon,airodump,csv,db,oui}
-  mkdir -p $CURRENTDIR/data/tmp/{log,PID,csv,nmap}
-}
-
 ## Main function
 function main(){
- 
-  local LASTTIMERAPATTACK=0
-  local LRESULT=""
-  local LAUXILIARYSOFT=""
- 
-  LAUXILIARYSOFT=${AUXILIARYSOFT[@]}
-  LRESULT=$(checkExistsPrograms "$LAUXILIARYSOFT")
-  if [ $? != 0 ];then
-    logOutput "alert" "Program($LRESULT) Not installed. Plz install these programs: apt install aircrack-ng sqlite3 nmap hostapd dnsmasq macchanger libxml2-utils  \n"
-    exit 1
-  fi
   
-  if [ ! -f "$OUIFILEPATH" ];then
-    logOutput "info" "Download OUI file\n"
-    downloadOUIFile  
-  fi  
-  
-  createDirectory
-  stopZombieProcess
+  LSESSION=""
 
-  startSniff
-  sleep 20
-  
-  while true; do
-    putCaptureDataToDB
-    findClientToAudit
-    if [ ! -z "$CLIENTTOAUDIT" ];then
-      stopSniff
-      stopServices
-      startRAPAttack "$CLIENTTOAUDIT" "$ROUTERESSID" "$ROUTERMAC" "$ROUTERCHANNEL"
-      LASTTIMERAPATTACK=$(date +%s)
-      while [ $(( LASTTIMERAPATTACK+TIMERAPATTACK+TIMERAPATTACKINCREASE )) -ge $( date +%s ) ];do
-        findTargets "$CLIENTTOAUDIT"
-	TIMERAPATTACKINCREASE=0
-      done
-      storeTargets
-      scanTargets
-      markAttackTargets
-      stopRAPAttack
-      startSniff
-      sleep 20
-    fi 
+  declare LSTARTDAEMON=false
+
+  while getopts ":ps:dh" opt; do
+    case $opt in
+      s)
+        LSTARTDAEMON=true
+        LSESSION=$( existsSessions "$OPTARG" )
+        if [ -z $LSESSION ];then
+          logOutput "alert" "Not exists session: $OPTARG \n"
+          exit 1
+        fi
+        DATETIME=$OPTARG
+        DATABASEPATH="$CURRENTDIR/data/db/diswised.$DATETIME.db"
+        ;;
+      p)
+        printf "Previous sessions:\n\n"
+        getSessions
+        printf "\n\n"
+        ;;
+      d)
+        LSTARTDAEMON=true
+        ;;
+      h)
+        echo -e "$HELPMESSAGE"
+        ;;
+      \?)
+        echo -e "Invalid option: -$OPTARG \n\n" >&2
+        printf "$HELPMESSAGE" 
+        ;;
+      :)
+        echo "Option -$OPTARG requires an argument." >&2
+        exit 1
+        ;;
+    esac
   done
+
+  if ( "$LSTARTDAEMON" );then
+    startDaemon
+  fi
 
 }

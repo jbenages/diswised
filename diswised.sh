@@ -33,6 +33,7 @@ source "$CURRENTDIR/conf/vars.cfg"
 . $CURRENTDIR/func/sniff.sh
 . $CURRENTDIR/func/rogueap.sh
 . $CURRENTDIR/func/scan.sh
+. $CURRENTDIR/func/server.sh
 . $CURRENTDIR/func/main.sh
 
 main $@
