@@ -15,8 +15,12 @@ function main(){
 
   declare LSTARTDAEMON=false
 
-  while getopts ":ps:dh" opt; do
+  while getopts ":ps:dhi:" opt; do
     case $opt in
+      i)
+        INTERFACE=$OPTARG
+        LSTARTDAEMON=true
+        ;;
       s)
         LSTARTDAEMON=true
         LSESSION=$( existsSessions "$OPTARG" )
