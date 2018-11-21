@@ -13,9 +13,9 @@ function scanTargets {
 
   for i in "${LISTTARGETSMAC[@]}";do
 
-    LIP=( $( grep "$i" /var/lib/misc/dnsmasq.leases | cut -d" " -f3 ) )
+    LIP=( $( grep "$i" "$DNSMASQLEASEFILE" | cut -d" " -f3 ) )
     LMACLOWER=$( echo "$i" | tr '[:upper:]' '[:lower:]' )
-    LHOSTNAMEDNS=( $( grep "$LMACLOWER" /var/lib/misc/dnsmasq.leases | cut -d" " -f4 ) )
+    LHOSTNAMEDNS=( $( grep "$LMACLOWER" "$DNSMASQLEASEFILE" | cut -d" " -f4 ) )
     scanNmap "$LIP" "$CURRENTDIR/data/tmp/nmap/$i.nmap.xml"
     LHOSTNAME=$( extractHostnameXML "$CURRENTDIR/data/tmp/nmap/$i.nmap.xml" )
     if [ ! -z $LHOSTNAME ] && [ $LHOSTNAME != "XPath set is empty" ];then
@@ -86,7 +86,7 @@ function storeTargets {
     fi
     
     LMACLOWER=$( echo "$i" | tr '[:upper:]' '[:lower:]' )
-    LHOSTNAMEDNS=( $( grep "$LMACLOWER" /var/lib/misc/dnsmasq.leases | cut -d" " -f4 ) )
+    LHOSTNAMEDNS=( $( grep "$LMACLOWER" "$DNSMASQLEASEFILE" | cut -d" " -f4 ) )
     LRESULT=$( updateClientRow "$i" "" "" "" "$LHOSTNAMEDNS" )
     if [ $? != 0 ];then
       logOutput "alert" "Error in SGDB ($LRESULT) \n"

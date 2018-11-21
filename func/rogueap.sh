@@ -26,9 +26,9 @@ function startRAPAttack {
   storePID "$HOSTAPDPID" "$CURRENTDIR/data/tmp/PID/hostapd"
   logOutput "info" "Start hostapd service \n" 
 
-  echo "" > /var/lib/misc/dnsmasq.leases
-  LDNSMASQCONF=$( generateConfigDnsmasq "$INTERFACE" "$IPRANGE" "$IPMASK" )
-  DNSMASQPID=$( startDnsmasq "$LDNSMASQCONF" "$CURRENTDIR/data/tmp/log/dnsmasq.log" )
+  echo "" > "$DNSMASQLEASEFILE" 
+  LDNSMASQCONF=$( generateConfigDnsmasq "$INTERFACE" "$IPRANGE" "$IPMASK" "$IPAP" )
+  DNSMASQPID=$( startDnsmasq "$LDNSMASQCONF" "$CURRENTDIR/data/tmp/log/dnsmasq.log" "$DNSMASQLEASEFILE" )
   storePID "$DNSMASQPID" "$CURRENTDIR/data/tmp/PID/dnsmasq"
   logOutput "info" "Start dnsmasq service \n" 
 
@@ -83,7 +83,7 @@ function extractClientsHostapdLog {
 }
 
 function extractClientsMACDnsmasq {
-  cut -d" " -f2 /var/lib/misc/dnsmasq.leases | tr '[:lower:]' '[:upper:]'
+  cut -d" " -f2 "$DNSMASQLEASEFILE" | tr '[:lower:]' '[:upper:]'
 }
 
 function asignIPInterface {
@@ -105,7 +105,7 @@ function generateConfigHostapd {
 }
 
 function generateConfigDnsmasq {
-  export CINTERFACE=$1 CIPRANGE=$2 CIPMASK=$3
+  export CINTERFACE=$1 CIPRANGE=$2 CIPMASK=$3 CIP=$4 
   envsubst < "$CURRENTDIR/conf/dnsmasq/diswised.conf"
 }
 
