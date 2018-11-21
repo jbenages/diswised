@@ -15,7 +15,7 @@ function main(){
 
   declare LSTARTDAEMON=false
 
-  while getopts ":ps:dhi:" opt; do
+  while getopts ":ps:dhi:u" opt; do
     case $opt in
       i)
         INTERFACE=$OPTARG
@@ -35,6 +35,9 @@ function main(){
         printf "Previous sessions:\n\n"
         getSessions
         printf "\n\n"
+        ;;
+      u)
+        STARTUI=true
         ;;
       d)
         LSTARTDAEMON=true

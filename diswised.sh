@@ -34,6 +34,7 @@ source "$CURRENTDIR/conf/vars.cfg"
 . $CURRENTDIR/func/rogueap.sh
 . $CURRENTDIR/func/scan.sh
 . $CURRENTDIR/func/server.sh
+. $CURRENTDIR/func/webui.sh
 . $CURRENTDIR/func/main.sh
 
 main $@
