@@ -21,7 +21,6 @@ function logOutput(){
 
     local TYPELOG=$1
     local OUTPUT=$2
-    local DOLOGHTML=$3
 
     local -A symbol=( [alert]="!" [info]="i" [done]="+" [nodone]="-" [input]="?" [objective]="*" )
     local -A color=( [alert]="31" [info]="34" [done]="32" [nodone]="33" [input]="36" [objective]="35"  )
@@ -50,9 +49,9 @@ function logOutput(){
         outputToFile "$GLOBALLOGPATH" "$OUTPUTFILE"
       fi
 
-      if ( $DOLOGHTML );then
-        local OUTPUTHTML="$LDATE <b style='color:${colorHTML[$TYPELOG]}'>[${symbol[$TYPELOG]}]</b> $OUTPUT" 
-        LOGHTML="$OUTPUTHTML<br/>"
+      if ( $GLOBALDOLOGHTML );then
+        local OUTPUTHTML="$LDATE <b style='color:${colorHTML[$TYPELOG]}'>[${symbol[$TYPELOG]}]</b> $OUTPUT<br/>"
+        outputToFile "$GLOBALLOGPATHHTML" "$OUTPUTHTML"
       fi
    
     fi
