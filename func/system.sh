@@ -43,7 +43,7 @@ function existsSessions {
 }
 
 function createDirectory {
-  mkdir -p $CURRENTDIR/data/{tmp,airmon,airodump,csv,db,oui}
+  mkdir -p $CURRENTDIR/data/{tmp,airmon,airodump,csv,db,oui,dnsmasq}
   mkdir -p $CURRENTDIR/data/tmp/{log,PID,csv,nmap}
 }
 
