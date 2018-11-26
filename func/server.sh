@@ -5,6 +5,8 @@ function startDaemon {
   local LASTTIMERAPATTACK=0
   local LRESULT=""
   local LAUXILIARYSOFT=""
+  
+  stopZombieProcess
 
   LAUXILIARYSOFT=${AUXILIARYSOFT[@]}
   LRESULT=$(checkExistsPrograms "$LAUXILIARYSOFT")
@@ -12,14 +14,18 @@ function startDaemon {
     logOutput "alert" "Program($LRESULT) Not installed. Plz install these programs: apt install aircrack-ng sqlite3 nmap hostapd dnsmasq macchanger libxml2-utils  \n"
     exit 1
   fi
+
+  if ( "$STARTUI" );then
+    GLOBALDOLOGHTML=true
+    startWebUI
+  fi
   
   if [ ! -f "$OUIFILEPATH" ];then
     logOutput "info" "Download OUI file\n"
     downloadOUIFile  
-  fi  
+  fi
   
   createDirectory
-  stopZombieProcess
 
   startSniff
   sleep 20
