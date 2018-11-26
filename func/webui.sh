@@ -20,7 +20,7 @@ function startWebUI {
   HOSTAPDUIPID=$( startHostapd "$LHOSTAPDCONF" "$CURRENTDIR/data/tmp/log/hostapd-ui.log" )
   storePID "$HOSTAPDUIPID" "$CURRENTDIR/data/tmp/PID/hostapd-ui"
   logOutput "info" "Start UI hostapd service \n" 
-
+  
   asignIPInterface "$INTERFACEUI" "$IPAPUI"
 
 }
