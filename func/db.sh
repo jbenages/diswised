@@ -108,7 +108,7 @@ function findClientToAudit {
       fi
       LROUTERESSID=$LCLIENTPROBEDESSID
       ROUTERESSID=$LCLIENTPROBEDESSID
-      ROUTERMAC=""
+      LROUTERMAC=""
       ROUTERCHANNEL=""
     else
       LROUTERMAC=$( query "select bssid from rawclientsignal where station_mac = '$LCLIENTTOAUDIT' and bssid != '(not associated)';" )
