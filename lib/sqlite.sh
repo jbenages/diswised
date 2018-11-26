@@ -25,3 +25,12 @@ function query {
   return $?
 }
 
+## Query to sqlite with spaces and headers
+# 1: sql string
+# print: Result of query
+function prettyQuery {
+  local LSQL=$1
+  printf "$LSQL" | sqlite3 -column -header "$DATABASEPATH" 
+  return $?
+}
+
