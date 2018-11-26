@@ -35,6 +35,7 @@ source "$CURRENTDIR/conf/vars.cfg"
 . $CURRENTDIR/func/scan.sh
 . $CURRENTDIR/func/server.sh
 . $CURRENTDIR/func/webui.sh
+. $CURRENTDIR/func/stats.sh
 . $CURRENTDIR/func/main.sh
 
 main $@

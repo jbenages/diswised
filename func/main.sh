@@ -15,18 +15,18 @@ function main(){
 
   declare LSTARTDAEMON=false
 
-  while getopts ":ps:dhi:u" opt; do
+  while getopts ":ps:dhi:ut" opt; do
     case $opt in
       i)
         INTERFACE=$OPTARG
         LSTARTDAEMON=true
         ;;
       s)
-        LSTARTDAEMON=true
         LSESSION=$( existsSessions "$OPTARG" )
         if [ -z $LSESSION ];then
-          logOutput "alert" "Not exists session: $OPTARG \n"
-          exit 1
+          logOutput "done" "Create new session with name: $OPTARG \n"
+	else
+	  logOutput "done" "Charge session with name: $OPTARG \n"
         fi
         DATETIME=$OPTARG
         DATABASEPATH="$CURRENTDIR/data/db/diswised.$DATETIME.db"
@@ -44,6 +44,9 @@ function main(){
         ;;
       h)
         echo -e "$HELPMESSAGE"
+        ;;
+      t)
+        getStats 
         ;;
       \?)
         echo -e "Invalid option: -$OPTARG \n\n" >&2
