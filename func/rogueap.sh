@@ -131,7 +131,7 @@ function markAttackTargets {
   for i in "${LISTTARGETSMAC[@]}";do
     if [ "$CLIENTTOAUDIT" != "$i" ];then
       ATTACKTYPE=$ATTACKOPENWIFI
-      LRESULT=$( createClientAttackRelation  "$i" "$ATTACKTYPE" "$ATTACKSUCCESS" )
+      LRESULT=$( createClientAttackRelation  "$i" "$ATTACKTYPE" "true" )
       if [ $? != 0 ];then
         logOutput "alert" "SGDB error ($LRESULT)\n"
       fi
@@ -139,9 +139,10 @@ function markAttackTargets {
       if [ -z "$ROUTERMAC" ];then
         ATTACKTYPE=$ATTACKRAP
       else
+	echo "ROUTERMAC: $ROUTERMAC"
         ATTACKTYPE=$ATTACKRAPASSOC
       fi 
-      LRESULT=$( createClientAttackRelation  "$CLIENTTOAUDIT" "$ATTACKTYPE" "false" )
+      LRESULT=$( createClientAttackRelation  "$CLIENTTOAUDIT" "$ATTACKTYPE" "true" )
       if [ $? != 0 ];then
         logOutput "alert" "SGDB error ($LRESULT)\n"
       fi
@@ -153,6 +154,7 @@ function markAttackTargets {
     if [ -z "$ROUTERMAC" ];then
       ATTACKTYPE=$ATTACKRAP
     else
+      echo "ROUTERMAC: $ROUTERMAC"
       ATTACKTYPE=$ATTACKRAPASSOC
     fi 
     LRESULT=$( createClientAttackRelation  "$CLIENTTOAUDIT" "$ATTACKTYPE" "false" )
