@@ -384,7 +384,7 @@ function createClientAttackRelation {
   if [ $LRETURN == 0 ];then
     LCLIENTID=$LRESULT
     if [ ! -z $LCLIENTID ]; then
-      LRESULT=$( query "select id from client_attack where client_id = '$LCLIENTID' and attack_id = '$LATTACKTYPE';" )
+      LRESULT=$( query "select id from client_attack where client_id = '$LCLIENTID' and attack_id = '$LATTACKID';" )
       LRETURN=$?
       if [ $LRETURN == 0 ];then
         if [ -z $RESULT ];then
