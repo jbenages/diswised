@@ -61,7 +61,7 @@ function storeTargets {
 
     LRESULT=$( createClientRow "$i" )
     if [ $? != 0 ];then
-      logOutput "alert" "Error in SGDB ($LRESULT) \n"
+      logOutput "alert" "Error in SGDB when create client ROW($LRESULT) \n"
       exit 0
     fi
     
@@ -75,13 +75,13 @@ function storeTargets {
 
     LRESULT=$( createRelationClientRouterDB "$i" "$ROUTERESSID" "" "$LASSOC" "$LRAPASSOC" )
     if [  $? != 0 ];then
-      logOutput "alert" "Error in SGDB ($LRESULT) \n"
+      logOutput "alert" "Error in SGDB when create relation with client and router ($LRESULT) \n"
       exit 0
     fi
 
     LRESULT=$( updateRelationClientRouter  "$i" "" "$ROUTERESSID" "$LASSOC" "$LRAPASSOC" )
     if [  $? != 0 ];then
-      logOutput "alert" "Error in SGDB ($LRESULT) \n"
+      logOutput "alert" "Error in SGDB when update relation with client and router ($LRESULT) \n"
       exit 0
     fi
     
@@ -89,7 +89,7 @@ function storeTargets {
     LHOSTNAMEDNS=( $( grep "$LMACLOWER" "$DNSMASQLEASEFILE" | cut -d" " -f4 ) )
     LRESULT=$( updateClientRow "$i" "" "" "" "$LHOSTNAMEDNS" )
     if [ $? != 0 ];then
-      logOutput "alert" "Error in SGDB ($LRESULT) \n"
+      logOutput "alert" "Error in SGDB when update client row ($LRESULT) \n"
       exit 0
     fi
     logOutput "objective" "Store target($i) with hostname($LHOSTNAMEDNS) associated($LASSOC) rap_assoc($LRAPASSOC) \n"
