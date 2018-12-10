@@ -32,7 +32,11 @@ function startDaemon {
   
   while true; do
     putCaptureDataToDB
-    findClientToAudit
+    if [ -z "$FIXEDTARGET" ];then
+      findClientToAudit
+    else
+      findFixedTarget  
+    fi
     if [ ! -z "$CLIENTTOAUDIT" ];then
       stopSniff
       stopServices
@@ -46,6 +50,10 @@ function startDaemon {
       scanTargets
       markAttackTargets
       stopRAPAttack
+      if ( $FIXEDTARGETCATCHED );then
+        logOutput "objective" "Catch target client ($FIXEDTARGET)\n"
+	exit 0
+      fi
       startSniff
       sleep 20
     fi 

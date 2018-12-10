@@ -147,6 +147,9 @@ function markAttackTargets {
         logOutput "alert" "SGDB error ($LRESULT)\n"
       fi
       MARKTARGET=1
+      if [ ! -z "$FIXEDTARGET" ];then
+        FIXEDTARGETCATCHED=true
+      fi
     fi
   done
 
@@ -154,7 +157,6 @@ function markAttackTargets {
     if [ -z "$ROUTERMAC" ];then
       ATTACKTYPE=$ATTACKRAP
     else
-      echo "ROUTERMAC: $ROUTERMAC"
       ATTACKTYPE=$ATTACKRAPASSOC
     fi 
     LRESULT=$( createClientAttackRelation  "$CLIENTTOAUDIT" "$ATTACKTYPE" "false" )

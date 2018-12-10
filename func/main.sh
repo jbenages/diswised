@@ -3,8 +3,8 @@
 trap ctrl_c INT
 
 function ctrl_c() {
-  #stopSniff
-  #stopRAPAttack
+  stopSniff
+  stopRAPAttack
   exit 0
 }
 
@@ -15,7 +15,7 @@ function main(){
 
   declare LSTARTDAEMON=false
 
-  while getopts ":ps:dhi:ut" opt; do
+  while getopts ":ps:dhi:uto:" opt; do
     case $opt in
       i)
         INTERFACE=$OPTARG
@@ -38,6 +38,11 @@ function main(){
         ;;
       u)
         STARTUI=true
+        ;;
+      o)
+        FIXEDTARGET=$OPTARG
+        FIXEDTARGET=$( echo "$FIXEDTARGET" | tr '[:lower:]' '[:upper:]' )
+	LSTARTDAEMON=true
         ;;
       d)
         LSTARTDAEMON=true

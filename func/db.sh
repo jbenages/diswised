@@ -120,9 +120,9 @@ function findClientToAudit {
           logOutput "alert" "3 Fail database query ($LRESULT) \n"
 	  exit 1
         fi
-	LRESULT=$( createRelationClientRouterDB "$LCLIENTTOAUDIT" "$ROUTERESSID" "$LROUTERMAC" "true" "false" > /dev/null )
+	LRESULT=$( createRelationClientRouterDB "$LCLIENTTOAUDIT" "$ROUTERESSID" "$LROUTERMAC" "true" "false" )
         if [ $? != 0 ];then
-          logOutput "alert" "4 Fail database query ($LRESULT) \n"
+          logOutput "alert" "Error SGDB when create realtion with client and router ($LRESULT) \n"
 	  exit 1
         fi
       fi
@@ -132,6 +132,65 @@ function findClientToAudit {
     ROUTERCHANNEL=$LROUTERCHANNEL
     ROUTERESSID=$LROUTERESSID
     logOutput "done" "Find target client_mac ($CLIENTTOAUDIT) router_mac($LROUTERMAC) router_essid ($LROUTERESSID) \n"
+  fi
+
+}
+
+function findFixedTarget {
+
+  LROUTERMAC=""
+  LROUTERCHANNEL=""
+  LROUTERESSID=""
+  LASSOC="false"
+  
+  LRESULT=$( query "select bssid from rawclientsignal where station_mac = '$FIXEDTARGET'" )
+  if [ $? != 0 ];then
+    logOutput "alert" "Fail database query ($LRESULT) \n"
+    exit 1
+  fi
+
+  if [ ! -z "$LRESULT" ];then
+    LROUTERMAC=$LRESULT
+    LROUTERESSID=$( query "select essid from rawroutersignal where bssid = '$LROUTERMAC';" )
+    if [ $? != 0 ];then
+      logOutput "alert" "Fail database query ($LRESULT) \n"
+      exit 1
+    fi
+    LROUTERCHANNEL=$( query "select channel from rawroutersignal where bssid = '$LROUTERMAC';" )
+    if [ $? != 0 ];then
+      logOutput "alert" "Fail database query ($LRESULT) \n"
+      exit 1
+    fi
+    LASSOC="true"
+  else
+    LROUTERESSID=$( query "select probed_essids from rawclientsignal where station_mac = '$FIXEDTARGET';" )
+    LROUTERESSID=$( echo "$LROUTERESSID" | cut -d';' -f1 )
+    LASSOC="false"
+  fi  
+
+  ROUTERMAC=$LROUTERMAC
+  ROUTERCHANNEL=$LROUTERCHANNEL
+  ROUTERESSID=$LROUTERESSID
+
+  if [ ! -z "$ROUTERMAC" ] || [ ! -z "$ROUTERESSID" ];then
+    CLIENTTOAUDIT=$FIXEDTARGET
+
+    LRESULT=$( createClientRow "$CLIENTTOAUDIT" )
+    if [ $? != 0 ];then
+      logOutput "alert" "Error SGDB when create user row ($LRESULT) \n" 
+      exit 1
+    fi
+    LRESULT=$( createRouterRow "$ROUTERESSID" "$ROUTERMAC" "$ROUTERCHANNEL" )
+    if [ $? != 0 ];then
+      logOutput "alert" "Error SGDB when create router row ($LRESULT)\n"
+      exit 1
+    fi
+    LRESULT=$( createRelationClientRouterDB "$CLIENTTOAUDIT" "$ROUTERESSID" "$LROUTERMAC" "$LASSOC" "false" )
+    if [ $? != 0 ];then
+      logOutput "alert" "Error SGDB when create realtion client router ($LRESULT) \n"
+      exit 1
+    fi
+    logOutput "done" "Find target client_mac ($CLIENTTOAUDIT) router_mac($ROUTERMAC) router_essid ($ROUTERESSID) \n"
   fi
 
 }
