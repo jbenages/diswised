@@ -15,7 +15,18 @@ function startDaemon {
     exit 1
   fi
 
+  checkIfExistsInterface "$INTERFACE"
+  if [ $? == 0 ];then
+    logOutput "alert" "Not exists interface $INTERFACE \n"
+    exit 0
+  fi
+
   if ( "$STARTUI" );then
+    checkIfExistsInterface "$INTERFACEUI"
+    if [ $? == 0 ];then
+      logOutput "alert" "Not exists WiFi $INTERFACEUI, can't start UI interface \n"
+      exit 0
+    fi
     GLOBALDOLOGHTML=true
     startWebUI
   fi
