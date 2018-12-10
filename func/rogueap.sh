@@ -95,8 +95,8 @@ function asignIPInterface {
 function stopRAPAttack {
   LISTTARGETSMAC=()
   LISTTARGETSMACHOST=()
-  kill -9 "$HOSTAPDPID"
-  kill -9 "$DNSMASQPID"
+  kill -9 "$HOSTAPDPID" > /dev/null 2>&1
+  kill -9 "$DNSMASQPID" > /dev/null 2>&1
 }
 
 function generateConfigHostapd {
